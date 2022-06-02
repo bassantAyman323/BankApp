@@ -67,6 +67,7 @@ class MyHomePage extends StatelessWidget {
       create: (BuildContext context)=>AppCubit()..createDatabase(),
       child: BlocConsumer<AppCubit,AppStates>(
         listener: (BuildContext context, AppStates states) {
+
           if(states is AppInsertDataBaseState){
               Navigator.pop(context);
           }
@@ -90,7 +91,7 @@ class MyHomePage extends StatelessWidget {
             if(cubit.isbottomsheet){
 
                 if(formKey.currentState!.validate()){
-                  cubit.insertToDatabase(name: nameController.text, balance: amountController.text);
+               //   cubit.insertToDatabase(name: "bassant", balance: "2000");
                   // insertToDatabase(name:nameController.text ,balance:amountController.text ).then((value){
 
                   //   isbottomsheet=false;

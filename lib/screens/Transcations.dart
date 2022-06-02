@@ -32,13 +32,17 @@ class TransactionsPage extends StatelessWidget {
   }
   Widget BuildTask(Map Model)=>  Padding(
     padding: const EdgeInsets.all(10.0),
+
     child: Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
 
+
+
+
         Expanded(
           child: Container(decoration: BoxDecoration(
-            color: HexColor('#bfbdca'),
+            color: Colors.grey[200],
             borderRadius: BorderRadius.all(Radius.circular(10))
 
           ),height: 50,
@@ -64,7 +68,7 @@ class TransactionsPage extends StatelessWidget {
             child: Center(
               child: Text(
 
-                '${Model['balance']}',
+                '${Model['transactions']}',
                 style: TextStyle(
                   color: Colors.white,
                     fontSize: 20.0, fontWeight: FontWeight.bold),

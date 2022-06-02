@@ -43,14 +43,33 @@ class AppCubit extends Cubit<AppStates>{
         version: 1,
         onCreate: (database,version){
           print('database created');
-           database.execute('CREATE TABLE Test (id INTEGER PRIMARY KEY, name TEXT, balance TEXT)');
+           database.execute('CREATE TABLE Test (id INTEGER PRIMARY KEY, name TEXT,email TEXT, balance TEXT,transactions TEXT)');
           print('table created');
+         database.transaction((txn)async{
+            await txn.rawInsert('INSERT INTO Test(name,balance,email) VALUES("lila","5000","lila@gmail.com")')
+                .then((value){ print("$value inserted successfully");})
+                .catchError((error){print("error when inserting  Record ${error.toString()}");});
+            await txn.rawInsert('INSERT INTO Test(name,balance,email) VALUES("bassant","5500","bassant@gmail.com")')
+                .then((value){ print("$value inserted successfully");})
+                .catchError((error){print("error when inserting  Record ${error.toString()}");});
+            await txn.rawInsert('INSERT INTO Test(name,balance,email) VALUES("Arwa","60000","Arwa@gmail.com")')
+                .then((value){ print("$value inserted successfully");})
+                .catchError((error){print("error when inserting  Record ${error.toString()}");});
+            await txn.rawInsert('INSERT INTO Test(name,balance,email) VALUES("Selim","2000","selim@gmail.com")')
+                .then((value){ print("$value inserted successfully");})
+                .catchError((error){print("error when inserting  Record ${error.toString()}");});
+
+
+          });
+
 
         },onOpen: (database){
       getDataFromDataBase(database).then((value) {
         data=value;
         print(data);
+
         emit(AppGetDataBaseState());
+
       }
       );
       print('database opened');
@@ -59,20 +78,26 @@ class AppCubit extends Cubit<AppStates>{
     },
     ).then((value) {
       database = value;
+      // Insert some records in a transaction
+
+
       emit(AppCreateDataBaseState());
     }
     );
 
+
   }
-   insertToDatabase({required String name,required String balance})async{
+   insertToDatabase()async{
    await database.transaction((txn)async{
-      await txn.rawInsert('INSERT INTO Test(name,balance) VALUES("$name","$balance")').then(
+      await txn.rawInsert('INSERT INTO Test(name,balance,email) VALUES("lila","12","toto@gmail.com")').then(
               (value){ print("$value inserted successfully");
               emit(AppInsertDataBaseState());
+
               getDataFromDataBase(database).then((value) {
                 data=value;
                 print(data);
                 emit(AppGetDataBaseState());
+
               }
               );
               }).catchError((error){
