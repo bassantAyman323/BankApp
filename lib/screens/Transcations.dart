@@ -15,7 +15,7 @@ class TransactionsPage extends StatelessWidget {
     return BlocConsumer<AppCubit,AppStates>(
       listener: (BuildContext context, Object? state) {  },
       builder: (BuildContext context, state) {
-        var data=AppCubit.get(context).data;
+        var data=AppCubit.get(context).transactiondata;
          return ListView.separated(
               itemBuilder: (context, index) =>BuildTask(data[index]),
 

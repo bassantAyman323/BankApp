@@ -18,6 +18,8 @@ class AppCubit extends Cubit<AppStates>{
   int currentIndex = 0;
   late Database database;
   List<Map> data=[];
+  List<Map> transactiondata=[];
+  List<Map> selecteddata=[];
   bool isbottomsheet=false;
   IconData fabIcon=Icons.edit;
   List<Widget> screens = [
@@ -43,35 +45,59 @@ class AppCubit extends Cubit<AppStates>{
         version: 1,
         onCreate: (database,version){
           print('database created');
-           database.execute('CREATE TABLE Test (id INTEGER PRIMARY KEY, name TEXT,email TEXT, balance TEXT,transactions TEXT)');
+           database.execute('CREATE TABLE Test (id INTEGER PRIMARY KEY, name TEXT,email TEXT, balance REAL,transactions REAL)');
           print('table created');
          database.transaction((txn)async{
-            await txn.rawInsert('INSERT INTO Test(name,balance,email) VALUES("lila","5000","lila@gmail.com")')
+            await txn.rawInsert('INSERT INTO Test(name,balance,email,transactions) VALUES("Lila",5000,"lila@gmail.com",0)')
                 .then((value){ print("$value inserted successfully");})
                 .catchError((error){print("error when inserting  Record ${error.toString()}");});
-            await txn.rawInsert('INSERT INTO Test(name,balance,email) VALUES("bassant","5500","bassant@gmail.com")')
+            await txn.rawInsert('INSERT INTO Test(name,balance,email,transactions) VALUES("Bassant",5500,"bassant@gmail.com",0)')
                 .then((value){ print("$value inserted successfully");})
                 .catchError((error){print("error when inserting  Record ${error.toString()}");});
-            await txn.rawInsert('INSERT INTO Test(name,balance,email) VALUES("Arwa","60000","Arwa@gmail.com")')
+            await txn.rawInsert('INSERT INTO Test(name,balance,email,transactions) VALUES("Arwa",60000,"Arwa@gmail.com",0)')
                 .then((value){ print("$value inserted successfully");})
                 .catchError((error){print("error when inserting  Record ${error.toString()}");});
-            await txn.rawInsert('INSERT INTO Test(name,balance,email) VALUES("Selim","2000","selim@gmail.com")')
+            await txn.rawInsert('INSERT INTO Test(name,balance,email,transactions) VALUES("Selim",2000,"selim@gmail.com",0)')
                 .then((value){ print("$value inserted successfully");})
                 .catchError((error){print("error when inserting  Record ${error.toString()}");});
+            getDataFromDataBase(database);
+            await txn.rawInsert('INSERT INTO Test(name,balance,email,transactions) VALUES("Rozana",2000,"rozana@gmail.com",0)')
+                .then((value){ print("$value inserted successfully");})
+                .catchError((error){print("error when inserting  Record ${error.toString()}");});
+            getDataFromDataBase(database);
+
+            await txn.rawInsert('INSERT INTO Test(name,balance,email,transactions) VALUES("Bassem",2000,"bassem@gmail.com",0)')
+                .then((value){ print("$value inserted successfully");})
+                .catchError((error){print("error when inserting  Record ${error.toString()}");});
+            getDataFromDataBase(database);
+
+            await txn.rawInsert('INSERT INTO Test(name,balance,email,transactions) VALUES("Rowan",2000,"rowan@gmail.com",0)')
+                .then((value){ print("$value inserted successfully");})
+                .catchError((error){print("error when inserting  Record ${error.toString()}");});
+            getDataFromDataBase(database);
+
+            await txn.rawInsert('INSERT INTO Test(name,balance,email,transactions) VALUES("Fauzia",2000,"fauzia@gmail.com",0)')
+                .then((value){ print("$value inserted successfully");})
+                .catchError((error){print("error when inserting  Record ${error.toString()}");});
+            getDataFromDataBase(database);
+
+            await txn.rawInsert('INSERT INTO Test(name,balance,email,transactions) VALUES("Samah",2000,"samah@gmail.com",0)')
+                .then((value){ print("$value inserted successfully");})
+                .catchError((error){print("error when inserting  Record ${error.toString()}");});
+            getDataFromDataBase(database);
+
+            await txn.rawInsert('INSERT INTO Test(name,balance,email,transactions) VALUES("Koko",2000,"koko@gmail.com",0)')
+                .then((value){ print("$value inserted successfully");})
+                .catchError((error){print("error when inserting  Record ${error.toString()}");});
+            getDataFromDataBase(database);
 
 
-          });
+
+         });
 
 
         },onOpen: (database){
-      getDataFromDataBase(database).then((value) {
-        data=value;
-        print(data);
-
-        emit(AppGetDataBaseState());
-
-      }
-      );
+      getDataFromDataBase(database);
       print('database opened');
 
 
@@ -89,27 +115,68 @@ class AppCubit extends Cubit<AppStates>{
   }
    insertToDatabase()async{
    await database.transaction((txn)async{
-      await txn.rawInsert('INSERT INTO Test(name,balance,email) VALUES("lila","12","toto@gmail.com")').then(
+      await txn.rawInsert('INSERT INTO Test(name,balance,email) VALUES("lila",12,"toto@gmail.com")').then(
               (value){ print("$value inserted successfully");
               emit(AppInsertDataBaseState());
-
-              getDataFromDataBase(database).then((value) {
-                data=value;
-                print(data);
-                emit(AppGetDataBaseState());
-
-              }
-              );
+              getDataFromDataBase(database);
               }).catchError((error){
         print("error when inserting  Record ${error.toString()}");
       });
       return null;
     });
   }
-  Future<List<Map>> getDataFromDataBase(database)async{
+  void getDataFromDataBase(database){
+    // data=[];
+    transactiondata=[];
     emit(AppGetDataBaseStateLoading());
-    return await database.rawQuery('SELECT * FROM Test');
+     database.rawQuery('SELECT * FROM Test').then((value) {
+      data=value;
+      print(data);
+      data.forEach((element) {
+        if(element['transactions']!=0){
+          transactiondata.add(element);
+          // data.add(element);
+
+        }
+        print(element['transactions']); });
+
+      emit(AppGetDataBaseState());
+
+    }
+    );
     // print(data);
+  }
+  void Selectspacific({required String name})async{
+    selecteddata=[];
+    emit(AppGetDataBaseStateLoading());
+    database.rawQuery('SELECT * FROM Test WHERE name=?',['$name']).then((value) {
+      getDataFromDataBase(database);
+      data.forEach((element) {
+        if(element['name']==name){
+          selecteddata.add(element);
+          // data.add(element);
+
+        }
+        print(element['name']);
+
+      }
+      );
+
+      emit(AppSelectedDataBaseState());
+
+    }
+    );
+
+  }
+  void UpdateDtataBase({required double transactions,required String name })async{
+  return   database.rawUpdate(
+        'UPDATE Test SET transactions = ? WHERE name = ?',
+        [transactions, '$name']).then((value) {
+          getDataFromDataBase(database);
+          emit(AppUpdateDataBaseState());
+
+        });
+
   }
   void changeBottomSheetState({required bool isshow, required IconData icon}){
     isbottomsheet=isshow;

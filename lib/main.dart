@@ -52,6 +52,7 @@ class MyHomePage extends StatelessWidget {
 
   var nameController=TextEditingController();
   var amountController=TextEditingController();
+  List names=["Lila","Bassant","Arwa","Selim","Rozana","Bassem","Rowan","Fauzia","Samah","Koko"];
 
   // @override
   // void initState() {
@@ -68,8 +69,10 @@ class MyHomePage extends StatelessWidget {
       child: BlocConsumer<AppCubit,AppStates>(
         listener: (BuildContext context, AppStates states) {
 
-          if(states is AppInsertDataBaseState){
+          if(states is AppUpdateDataBaseState){
               Navigator.pop(context);
+              amountController.text="";
+              nameController.text="";
           }
         },
         builder: (BuildContext context, AppStates states) {
@@ -89,9 +92,10 @@ class MyHomePage extends StatelessWidget {
             floatingActionButton:
             FloatingActionButton(onPressed: (){
             if(cubit.isbottomsheet){
-
                 if(formKey.currentState!.validate()){
-               //   cubit.insertToDatabase(name: "bassant", balance: "2000");
+                 // cubit.insertToDatabase(name: "bassant", balance: "2000");
+                  cubit.UpdateDtataBase(transactions: double.parse(amountController.text), name: nameController.text);
+
                   // insertToDatabase(name:nameController.text ,balance:amountController.text ).then((value){
 
                   //   isbottomsheet=false;
@@ -143,7 +147,10 @@ class MyHomePage extends StatelessWidget {
                         validator: (value){
                           if(value==""){
                             return'name must not be empty';
-                          }return null;
+                          }    if(value!=""){
+
+                          }
+                          return null;
 
                         },
                         decoration: InputDecoration(
