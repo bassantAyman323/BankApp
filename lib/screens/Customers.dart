@@ -90,8 +90,7 @@ class CustomersScreen extends StatelessWidget {
             ),height: 50,
             child: Center(
               child: Text(
-
-                '${Model['balance']}',
+                '${Model['balance']+Model['transactions']}',
                 style: TextStyle(
                     color: Colors.white,
                     fontSize: 13.0, fontWeight: FontWeight.bold),
