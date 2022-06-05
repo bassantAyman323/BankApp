@@ -19,6 +19,7 @@ class AppCubit extends Cubit<AppStates>{
   late Database database;
   List<Map> data=[];
   List<Map> transactiondata=[];
+  List<Map> selecteddata=[];
   bool isbottomsheet=false;
   IconData fabIcon=Icons.edit;
   List<Widget> screens = [
@@ -142,13 +143,29 @@ class AppCubit extends Cubit<AppStates>{
       emit(AppGetDataBaseState());
 
     }
-    );;
+    );
     // print(data);
   }
-  void changeBottomSheetState({required bool isshow, required IconData icon}){
-    isbottomsheet=isshow;
-    fabIcon=icon;
-    emit(ChangeBottomSheetState());
+  void Selectspacific({required String name})async{
+    selecteddata=[];
+    emit(AppGetDataBaseStateLoading());
+    database.rawQuery('SELECT * FROM Test WHERE name=?',['$name']).then((value) {
+      getDataFromDataBase(database);
+      data.forEach((element) {
+        if(element['name']==name){
+          selecteddata.add(element);
+          // data.add(element);
+
+        }
+        print(element['name']);
+
+      }
+      );
+
+      emit(AppSelectedDataBaseState());
+
+    }
+    );
 
   }
   void UpdateDtataBase({required double transactions,required String name })async{
@@ -159,6 +176,12 @@ class AppCubit extends Cubit<AppStates>{
           emit(AppUpdateDataBaseState());
 
         });
+
+  }
+  void changeBottomSheetState({required bool isshow, required IconData icon}){
+    isbottomsheet=isshow;
+    fabIcon=icon;
+    emit(ChangeBottomSheetState());
 
   }
 

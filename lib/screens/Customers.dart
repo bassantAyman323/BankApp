@@ -2,11 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hexcolor/hexcolor.dart';
 
+
 import '../shared/cubit/cubit.dart';
 import '../shared/cubit/states.dart';
 
 class CustomersScreen extends StatelessWidget {
+  var scaffoldKey=GlobalKey<ScaffoldState>();
+  var formKey=GlobalKey<FormState>();
 
+  var nameController=TextEditingController();
+  var amountController=TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +21,7 @@ class CustomersScreen extends StatelessWidget {
       builder: (BuildContext context, state) {
         var data=AppCubit.get(context).data;
         return ListView.separated(
-            itemBuilder: (context, index) =>BuildTask(data[index]),
+            itemBuilder: (context, index) =>BuildTask(data[index],context),
 
             separatorBuilder: (context, index) => Container(
               width: double.infinity,
@@ -29,14 +34,74 @@ class CustomersScreen extends StatelessWidget {
 
     );
   }
-  Widget BuildTask(Map Model)=>  Padding(
+  Widget BuildTask(Map Model,context)=>  Padding(
+
     padding: const EdgeInsets.all(10.0),
     child: Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
+        IconButton(onPressed: (){
+          showDialog(
+            context: context,
+            builder: (context2) {
+              return AlertDialog(
+                backgroundColor: Colors.grey[200],
+                //bassant changed here
+                title:  Text( 'Name: ${Model['name']}\nEmail: ${Model['email']}\nBalance: ${Model['balance']+Model['transactions']}',
+                    style:TextStyle(color:Colors.black ) ),
+                content:
+                    Form(
+                      key: formKey,
+                      child: TextFormField(
+                        controller: amountController,
+                        keyboardType:TextInputType.number,
+                        validator: (value){
+                          if(value==""){
+                            return'name must not be empty';
+                          }    if(value!=""){
+
+                          }
+                          return null;
+
+                        },
+                        decoration: InputDecoration(
+
+                          labelText: 'Transfer amount:',
+                          prefix: Icon(Icons.monetization_on),
+
+
+                        ),
+
+                      ),
+                    ),
+                actions: <Widget>[
+                  new FlatButton(
+                    child: const Text("Transfer"),
+                    onPressed: () {
+                    if(formKey.currentState!.validate()){
+                      AppCubit.get(context).UpdateDtataBase(transactions: double.parse(amountController.text), name: '${Model['name']}');
+                      amountController.text="";}
+                },
+                  ),
+                  new FlatButton(
+                    child: const Text("Cancel"),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              );
+            },
+          );
+          // AppCubit.get(context).Selectspacific(name: '${Model['name']}');
+
+        }, icon: Icon(Icons.arrow_forward_outlined)),
+
 
         Expanded(
-          child: Container(decoration: BoxDecoration(
+          child: Container(
+
+            decoration: BoxDecoration(
               color: Colors.grey[200],
               borderRadius: BorderRadius.all(Radius.circular(10))
 
@@ -102,4 +167,26 @@ class CustomersScreen extends StatelessWidget {
       ],
     ),
   );
+  void showSuccess(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          //bassant changed here
+          title:  Text(""
+              ///
+              ,style:TextStyle(color:Colors.black ) ),
+
+          actions: <Widget>[
+            new FlatButton(
+              child: const Text("OK"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 }
