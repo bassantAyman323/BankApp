@@ -20,15 +20,18 @@ class CustomersScreen extends StatelessWidget {
       listener: (BuildContext context, Object? state) {  },
       builder: (BuildContext context, state) {
         var data=AppCubit.get(context).data;
-        return ListView.separated(
-            itemBuilder: (context, index) =>BuildTask(data[index],context),
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 80),
+          child: ListView.separated(
+              itemBuilder: (context, index) =>BuildTask(data[index],context),
 
-            separatorBuilder: (context, index) => Container(
-              width: double.infinity,
-              height: 1,
-              color: Colors.grey[300],
-            ),
-            itemCount: data.length);
+              separatorBuilder: (context, index) => Container(
+                width: double.infinity,
+                height: 1,
+                color: Colors.grey[300],
+              ),
+              itemCount: data.length),
+        );
 
       },
 
@@ -57,7 +60,7 @@ class CustomersScreen extends StatelessWidget {
                         keyboardType:TextInputType.number,
                         validator: (value){
                           if(value==""){
-                            return'name must not be empty';
+                            return'Amount must not be empty';
                           }    if(value!=""){
 
                           }
